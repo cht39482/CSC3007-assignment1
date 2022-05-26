@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>CSC3007-assignment1</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <script>
+
+        function formatTime(datetime) {
+            var hr = datetime.getHours();
+            var min = datetime.getMinutes();
+            var sec = datetime.getSeconds();
+            var converted_hr = hr >= 12 ? 'pm' : 'am';
+            hr = hr % 12;
+            hr = hr ? hr : 12;
+            min = min < 10 ? '0' + min : min;
+            sec = sec < 10 ? '0' + sec : sec;
+            var str_time = hr + ':' + min + ':' + sec + ' ' + converted_hr;
+            return str_time;
+        }
+        function formatDate(datetime) {
+            var year=datetime.getFullYear()
+            var month = datetime.toLocaleString('default', { month: 'long' }); 
+            var date =datetime.getDate()
+            var str_date=date+" "+month+ " "+year
+            return str_date
+        }
+        $(document).ready(function () {
+            $.ajax({
+                url: 'https://api.data.gov.sg/v1/environment/psi',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    var trHTML = '';
+                    dt = new Date(response.items[0].timestamp);
+                    $.each(response.items[0].readings, function (i, item) {
+                        trHTML += "<tr><td>" + i
+                            + "</td><td>" + item.national
+                            + "</td><td>" + item.central
+                            + "</td><td>" + item.west
+                            + "</td><td>" + item.east
+                            + "</td><td>" + item.north
+                            + "</td><td>" + item.south
+                            + "</td></tr>";
+                    });
+                    $("#environment-record").append(trHTML);
+                    var ampm = dt.getHours() >= 12 ? "pm" : "am";
+                   
+                    var fdate =  $("<p></p").text("Retrieved Date: " + formatDate(dt));
+                    var ftime = $("<p></p").text("Retrieved Time: " + formatTime(dt));
+
+                    $("#timestamp").append(fdate,ftime);
+
+
+                }
+            });
+        });
+    </script>
+    <div class="container">
+        <table class="table table-hover table-dark">
+            <thead>
+                <th>Metric</th>
+                <th>National</th>
+                <th>Central</th>
+                <th>West</th>
+                <th>East</th>
+                <th>North</th>
+                <th>South</th>
+            </thead>
+            <tbody id="environment-record">
+
+            </tbody>
+
+        </table>
+        <div id="timestamp">
+
+        </div>
+    </div>
+</body>
+
+</html>
