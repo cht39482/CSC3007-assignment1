@@ -38,7 +38,7 @@
                 dataType: 'json',
                 success: function (response) {
                     var trHTML = '';
-                    dt = new Date(response.items[0].timestamp);
+                    dt = new Date(response.items[0].update_timestamp);
                     $.each(response.items[0].readings, function (i, item) {
                         trHTML += "<tr><td>" + i
                             + "</td><td>" + item.national
